@@ -61,28 +61,28 @@ Step 4: Training Loop with Loss Function
 Use Mel Spectrogram Loss or L1 Loss to compare the generated spectrogram with the target spectrogram.
 Add an auxiliary language classification loss to encourage the model to distinguish between languages.
 
-    import torch.optim as optim
+        import torch.optim as optim
+   
+        def train_tts_model(model, train_loader, num_epochs=10):
+            criterion = nn.MSELoss()
+            optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    def train_tts_model(model, train_loader, num_epochs=10):
-        criterion = nn.MSELoss()
-        optimizer = optim.Adam(model.parameters(), lr=0.001)
-    
-        model.train()
-        for epoch in range(num_epochs):
-            total_loss = 0
-            for batch in train_loader:
-                phonological = batch['phonological']
-                speaker_id = batch['speaker_id']
-                audio = batch['audio']
+            model.train()
+            for epoch in range(num_epochs):
+                total_loss = 0
+                for batch in train_loader:
+                    phonological = batch['phonological']
+                    speaker_id = batch['speaker_id']
+                    audio = batch['audio']
+                    
+                    optimizer.zero_grad()
+                    outputs = model(phonological, speaker_id)
+                    loss = criterion(outputs, audio)
+                    loss.backward()
+                    optimizer.step()
+                    total_loss += loss.item()
                 
-                optimizer.zero_grad()
-                outputs = model(phonological, speaker_id)
-                loss = criterion(outputs, audio)
-                loss.backward()
-                optimizer.step()
-                total_loss += loss.item()
-            
-            print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss/len(train_loader):.4f}")
+                print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss/len(train_loader):.4f}")
 
 Step 5: Evaluation
 Mean Opinion Score (MOS): Conduct human evaluations to obtain MOS for speech naturalness across the three languages.
