@@ -15,6 +15,7 @@ Speaker Embeddings:
 
 Extract speaker embeddings (e.g., using pretrained d-vectors or x-vectors) if you want your TTS model to adapt to different speaker voices across languages.
 If you're using a multispeaker dataset, assign each speaker an ID and embed it as a speaker embedding vector.
+
 Step 2: Choose a TTS Model Architecture
 For a cross-lingual TTS system, consider architectures like Tacotron2, FastSpeech2, or VITS:
 
@@ -48,6 +49,7 @@ Here's an example of setting up a cross-lingual TTS model pipeline using Tacotro
 Phoneme Encoder: Converts phonological feature inputs into embeddings.
 Speaker Embedding: Speaker ID embedding, allowing speaker adaptation.
 TTS Decoder: Converts combined embeddings into spectrogram frames, which can be converted into waveform using a vocoder (e.g., HiFi-GAN, WaveGlow).
+
 Step 3: Training Strategy
 1. Multitask Training with Language Tags:
 Add a language embedding to each input (similar to speaker embeddings) to help the model understand language contexts.
@@ -57,6 +59,7 @@ Train the model on Hindi, Marathi, and Gujarati samples in the same batch or alt
 Use gradient accumulation and mixed-language mini-batches for cross-lingual generalization, making it robust to language changes.
 3. Phoneme Augmentation:
 Since Hindi, Marathi, and Gujarati share many phonemes, you can augment the training by pairing similar phonemes across languages to create a larger, mixed-language phoneme pool.
+
 Step 4: Training Loop with Loss Function
 Use Mel Spectrogram Loss or L1 Loss to compare the generated spectrogram with the target spectrogram.
 Add an auxiliary language classification loss to encourage the model to distinguish between languages.
@@ -83,6 +86,7 @@ Add an auxiliary language classification loss to encourage the model to distingu
                     total_loss += loss.item()
                 
                 print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss/len(train_loader):.4f}")
+
 
 Step 5: Evaluation
 Mean Opinion Score (MOS): Conduct human evaluations to obtain MOS for speech naturalness across the three languages.
